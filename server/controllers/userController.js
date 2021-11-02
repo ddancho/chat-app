@@ -8,9 +8,7 @@ const getUser = async (req, res) => {
   const username = req.query.username;
 
   try {
-    const user = id
-      ? await db.getUserById(id)
-      : await db.getUserByUsername(username);
+    const user = id ? await db.getUserById(id) : await db.getUserByUsername(username);
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -72,9 +70,7 @@ const followUser = async (req, res) => {
         await db.updateUser(user.id, user);
 
         // userToFollow -> followers
-        let followers = userToFollow.followers
-          ? userToFollow.followers.split(",")
-          : [];
+        let followers = userToFollow.followers ? userToFollow.followers.split(",") : [];
 
         followers = [user.id, ...followers];
         userToFollow.followers = followers.toString();
@@ -82,9 +78,7 @@ const followUser = async (req, res) => {
 
         return res.status(200).json({ message: "User has been followed" });
       } else {
-        return res
-          .status(403)
-          .json({ message: "You already follow this user" });
+        return res.status(403).json({ message: "You already follow this user" });
       }
     } catch (err) {
       return res.status(500).json(err);
@@ -104,29 +98,21 @@ const unfollowUser = async (req, res) => {
         return res.status(404).json({ message: "User not found" });
       }
 
-      let followers = userToUnFollow.followers
-        ? userToUnFollow.followers.split(",")
-        : [];
+      let followers = userToUnFollow.followers ? userToUnFollow.followers.split(",") : [];
 
       if (followers.includes(String(user.id))) {
-        userToUnFollow.followers = followers
-          .filter((id) => id !== String(user.id))
-          .toString();
+        userToUnFollow.followers = followers.filter((id) => id !== String(user.id)).toString();
 
         await db.updateUser(userToUnFollow.id, userToUnFollow);
 
         let followings = user.followings ? user.followings.split(",") : [];
-        user.followings = followings
-          .filter((id) => id !== String(userToUnFollow.id))
-          .toString();
+        user.followings = followings.filter((id) => id !== String(userToUnFollow.id)).toString();
 
         await db.updateUser(user.id, user);
 
         return res.status(200).json({ message: "User has been unfollowed" });
       } else {
-        return res
-          .status(403)
-          .json({ message: "You already unfollow this user" });
+        return res.status(403).json({ message: "You already unfollow this user" });
       }
     } catch (err) {
       return res.status(500).json(err);
@@ -156,9 +142,7 @@ const updateUser = async (req, res) => {
         return res.status(404).json({ message: "User not found" });
       }
       await db.updateUser(id, req.body);
-      return res
-        .status(200)
-        .json({ message: "User information has been updated" });
+      return res.status(200).json({ message: "User information has been updated" });
     } catch (err) {
       return res.status(500).json(err);
     }
