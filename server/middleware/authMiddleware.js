@@ -39,14 +39,6 @@ const userRegisterRules = () => {
   ];
 };
 
-const userRegisterValidation = (req, res, next) => {
-  const errors = validationResult(req);
-
-  req.userRegisterErrors = errors.array().map((error) => ({ [error.param]: error.msg })) || [];
-
-  return next();
-};
-
 const userLoginRules = () => {
   return [
     body("email")
@@ -64,17 +56,16 @@ const userLoginRules = () => {
   ];
 };
 
-const userLoginValidation = (req, res, next) => {
+const authValidation = (req, res, next) => {
   const errors = validationResult(req);
 
-  req.userLoginErrors = errors.array().map((error) => ({ [error.param]: error.msg })) || [];
+  req.authErrors = errors.array().map((error) => ({ [error.param]: error.msg })) || [];
 
   return next();
 };
 
 module.exports = {
   userRegisterRules,
-  userRegisterValidation,
   userLoginRules,
-  userLoginValidation,
+  authValidation,
 };

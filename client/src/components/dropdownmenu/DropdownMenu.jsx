@@ -2,9 +2,11 @@ import { Container, Menu } from "../styles/DropdownMenu.styled";
 import { useState, useRef, useEffect } from "react";
 import { useSelector } from "react-redux";
 
-export default function DropdownMenu({ handleLogout, children }) {
+export default function DropdownMenu({ handleFileUpload, handleLogout, children }) {
   const [isActive, setIsActive] = useState(false);
   const dropdown = useRef();
+  const hiddenInput = useRef();
+
   const { userInfo: user } = useSelector((state) => state.user);
 
   useEffect(() => {
@@ -32,15 +34,26 @@ export default function DropdownMenu({ handleLogout, children }) {
     setIsActive(!isActive);
   };
 
+  const handleUploadClick = (e) => {
+    document.getElementById("fileInput").value = "";
+    hiddenInput.current.click();
+  };
+
+  const handleChange = (e) => {
+    const fileToUpload = e.target.files;
+    handleFileUpload(fileToUpload);
+  };
+
   return (
     <Container onClick={handleClick} isActive={isActive} user={user}>
       {children}
       <Menu ref={dropdown} isActive={isActive}>
         <ul>
-          <li>Upload Profile Picture</li>
+          <li onClick={handleUploadClick}>Upload Profile Picture</li>
           <li onClick={handleLogout}>Logout</li>
         </ul>
       </Menu>
+      <input type='file' id='fileInput' ref={hiddenInput} onChange={handleChange} />
     </Container>
   );
 }

@@ -34,7 +34,6 @@ app.use(
 
 // middleware
 app.use(express.json());
-app.use(express.urlencoded({ extended: true, limit: "30mb" }));
 app.use(helmet());
 
 // reverse proxy

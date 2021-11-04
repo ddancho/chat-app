@@ -3,13 +3,13 @@ const bcrypt = require("bcrypt");
 
 const register = async (req, res) => {
   try {
-    if (req.userRegisterErrors.length > 0) {
+    if (req.authErrors.length > 0) {
       const usernameErrors = [];
       const emailErrors = [];
       const passwordErrors = [];
       const confirmErrors = [];
 
-      req.userRegisterErrors.forEach((error) => {
+      req.authErrors.forEach((error) => {
         error["username"] && usernameErrors.push(error["username"]);
         error["email"] && emailErrors.push(error["email"]);
         error["password"] && passwordErrors.push(error["password"]);
@@ -42,11 +42,11 @@ const register = async (req, res) => {
 
 const login = async (req, res) => {
   try {
-    if (req.userLoginErrors.length > 0) {
+    if (req.authErrors.length > 0) {
       const emailErrors = [];
       const passwordErrors = [];
 
-      req.userLoginErrors.forEach((error) => {
+      req.authErrors.forEach((error) => {
         error["email"] && emailErrors.push(error["email"]);
         error["password"] && passwordErrors.push(error["password"]);
       });

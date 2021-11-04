@@ -3,6 +3,10 @@ import styled from "styled-components";
 export const Container = styled.div`
   position: relative;
 
+  & > input {
+    display: none;
+  }
+
   & > svg {
     cursor: ${({ isActive }) => (isActive ? "pointer" : "default")};
     border: ${({ isActive }) => (isActive ? "1px solid white" : "none")};
@@ -24,6 +28,7 @@ export const Menu = styled.nav`
   width: 220px;
   background: white;
   border-radius: 10px;
+  border: 1px solid #c2e7ba;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.3);
   opacity: ${({ isActive }) => (isActive ? "1" : "0")};
   visibility: ${({ isActive }) => (isActive ? "visible" : "hidden")};
