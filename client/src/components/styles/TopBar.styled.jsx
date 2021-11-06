@@ -28,22 +28,24 @@ export const Logo = styled.span`
 `;
 
 export const SearchBar = styled.div`
-  width: 100%;
-  height: 30px;
-  background-color: white;
-  border-radius: 30px;
   display: flex;
   align-items: center;
+  justify-content: left;
+  width: 70%;
+  height: 30px;
+  background-color: white;
+  border-radius: 20px;
 `;
 
 export const SearchBarIcon = styled.div`
-  font-size: 20px;
-  margin-left: 10px;
+  font-size: 10px;
+  margin: auto 6px;
 `;
 
 export const SearchBarInput = styled.input`
   border: none;
-  width: 70%;
+  width: 90%;
+  margin: auto 0;
 
   &:focus {
     outline: none;

@@ -54,8 +54,14 @@ const login = async (req, res) => {
     }
 
     const user = await db.getUserByEmail(req.body.email);
+    if (!user) {
+      return res
+        .status(422)
+        .json({ emailErrors: ["Email value is not found"], passwordErrors: ["Password value is not found"] });
+    }
+
     const isValid = await bcrypt.compare(req.body.password, user.password);
-    if (!user || !isValid) {
+    if (!isValid) {
       return res
         .status(422)
         .json({ emailErrors: ["Email value is not found"], passwordErrors: ["Password value is not found"] });
