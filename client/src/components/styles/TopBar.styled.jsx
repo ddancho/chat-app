@@ -80,23 +80,7 @@ export const IconsContainer = styled.div`
   align-items: center;
 
   & > div {
-    margin-right: 15px;
-    position: relative;
-  }
-
-  & > div span {
-    position: absolute;
-    top: -5px;
-    right: -5px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 15px;
-    height: 15px;
-    background-color: red;
-    border-radius: 50%;
-    color: white;
-    font-size: 12px;
+    margin: 0 auto;
   }
 `;
 
@@ -118,5 +102,4 @@ export const ProfileImg = styled.img`
   border-radius: 50%;
   object-fit: cover;
   margin-right: 25px;
-  cursor: pointer;
 `;

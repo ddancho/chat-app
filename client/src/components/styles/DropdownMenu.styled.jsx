@@ -13,11 +13,11 @@ export const Container = styled.div`
   }
 
   &:hover {
-    cursor: ${({ user }) => (user.length === 0 ? "default" : "pointer")};
+    cursor: ${({ user }) => (!user.id ? "default" : "pointer")};
   }
 
   & > svg:hover {
-    cursor: ${({ user }) => (user.length === 0 ? "default" : "pointer")};
+    cursor: ${({ user }) => (!user.id ? "default" : "pointer")};
   }
 `;
 

@@ -11,10 +11,9 @@ const uploadUserProfilePicture = async (req, res) => {
       return res.status(404).json({ message: "User not found" });
     }
 
-    user.profilePicture = req.profilePictureSlug;
-    await db.updateUser(req.session.user.id, user);
+    await db.updateUser(req.session.user.id, { profile_picture: req.profilePictureSlug });
 
-    req.session.user.profilePicture = req.profilePictureSlug;
+    req.session.user.profile_picture = req.profilePictureSlug;
 
     return res.status(200).json(1);
   } catch (err) {

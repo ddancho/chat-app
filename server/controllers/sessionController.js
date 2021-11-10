@@ -1,14 +1,28 @@
 const userSession = (req, res) => {
   try {
-    if (!req.session || !req.session.user) {
-      return res.status(422).json(null);
-    }
+    let user = {};
 
-    const user = {
-      username: req.session.user.username,
-      email: req.session.user.email,
-      profilePicture: req.session.user.profilePicture,
-    };
+    if (!req.session || !req.session.user) {
+      user = {
+        userInfo: {},
+        currentConversation: {},
+      };
+    } else {
+      user = {
+        userInfo: {
+          id: req.session.user.id.toString(),
+          username: req.session.user.username,
+          email: req.session.user.email,
+          profilePicture: req.session.user.profile_picture,
+        },
+        currentConversation: req.session.user.current_id
+          ? {
+              id: req.session.user.current_id,
+              members: req.session.user.current_members,
+            }
+          : [],
+      };
+    }
 
     res.status(200).json(user);
   } catch (err) {

@@ -30,6 +30,7 @@ const register = async (req, res) => {
       username: req.body.username,
       email: req.body.email,
       password: hashPassword,
+      profile_picture: "person/noAvatar.png",
     };
 
     await db.createUser(user);
@@ -67,9 +68,15 @@ const login = async (req, res) => {
         .json({ emailErrors: ["Email value is not found"], passwordErrors: ["Password value is not found"] });
     }
 
+    if (user.is_logged) {
+      return res.status(422).json({ emailErrors: ["Email is already login"] });
+    }
+
+    await db.updateUser(user.id, { is_logged: true });
+
     req.session.user = user;
 
-    res.status(200).json(1);
+    res.status(200).json(user);
   } catch (err) {
     res.status(500).json(err);
   }
@@ -80,6 +87,8 @@ const logout = async (req, res) => {
     if (!req.session || !req.session.user) {
       return res.status(422).json(null);
     }
+
+    await db.updateUser(req.session.user.id, { is_logged: false });
 
     req.session.user = null;
 

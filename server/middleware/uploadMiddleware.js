@@ -34,9 +34,13 @@ const fileFilter = (req, file, cb) => {
     return cb(null, false);
   }
 
-  if (req.session.user.profilePicture) {
+  if (req.session.user.profilePicture !== "person/noAvatar.png") {
     const oldFile = "public/images/" + req.session.user.profilePicture;
-    fs.unlink(oldFile, (err) => err && console.log(err));
+    fs.access(oldFile, fs.constants.F_OK, (err) => {
+      if (!err) {
+        fs.unlink(oldFile, (err) => err && console.log(err));
+      }
+    });
   }
 
   cb(null, true);

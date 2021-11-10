@@ -6,9 +6,10 @@ const redis = require("redis");
 
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
-const postRoutes = require("./routes/postRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
 const sessionRoutes = require("./routes/sessionRoutes");
+const conversationRoutes = require("./routes/conversationRoutes");
+const messageRoutes = require("./routes/messageRoutes");
 
 // server
 const app = express();
@@ -45,12 +46,13 @@ app.use("/images", express.static(path.join(__dirname, "public/images")));
 // routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/users", userRoutes);
-app.use("/api/v1/posts", postRoutes);
 app.use("/api/v1/upload", uploadRoutes);
 app.use("/api/v1/session", sessionRoutes);
+app.use("/api/v1/conversations", conversationRoutes);
+app.use("/api/v1/messages", messageRoutes);
 
 app.all("*", (req, res) => {
-  res.status(404).json("Page Not Found");
+  res.status(404).send("<h1>Page Not Found</h1>");
 });
 
 app.listen(5000, () => {

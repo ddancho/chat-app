@@ -4,17 +4,12 @@ exports.up = function (knex) {
     table.string("username").notNullable();
     table.string("email").collate("utf8_bin").unique().notNullable();
     table.string("password").notNullable();
-    table.string("profilePicture").defaultTo("");
-    table.string("coverPicture").defaultTo("");
-    table.text("followers").defaultTo("");
-    table.text("followings").defaultTo("");
-    table.boolean("isAdmin").defaultTo(false);
-    table.string("desc").defaultTo("");
-    table.string("city").defaultTo("");
-    table.string("from").defaultTo("");
-    table.enu("relationship", [1, 2, 3]);
+    table.string("profile_picture").defaultTo("");
+    table.integer("current_conversation_id").unsigned();
+    table.boolean("is_logged").defaultTo(false);
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
+    table.foreign("current_conversation_id").references("id").inTable("conversations");
   });
 };
 

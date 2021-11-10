@@ -19,10 +19,10 @@ function App() {
           <Home />
         </Route>
         <Route exact path='/register'>
-          {user.length === 0 ? <Register /> : <Redirect to='/' />}
+          {!user.id ? <Register /> : <Redirect to='/' />}
         </Route>
         <Route exact path='/login'>
-          {user.length === 0 ? <Login /> : <Redirect to='/' />}
+          {!user.id ? <Login /> : <Redirect to='/' />}
         </Route>
         <Route path='*'>
           <PageNotFound />

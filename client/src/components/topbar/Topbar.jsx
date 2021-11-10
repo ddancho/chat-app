@@ -13,7 +13,7 @@ import {
 } from "../styles/TopBar.styled";
 import DropdownMenu from "../dropdownmenu/DropdownMenu";
 import Modal from "../modal/Modal";
-import { Search, Person, Chat, Notifications } from "@material-ui/icons";
+import { Search, Person } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -100,7 +100,7 @@ export default function Topbar() {
         </SearchBar>
       </Flex>
       <FlexRight>
-        {user.length === 0 && (
+        {!user.id && (
           <LinksContainer>
             <div>
               <Link to='/login'>Login</Link>
@@ -114,20 +114,12 @@ export default function Topbar() {
           <DropdownMenu handleFileUpload={handleFileUpload} handleLogout={handleLogout}>
             <Person />
           </DropdownMenu>
-          <div>
-            <Chat />
-            <span>2</span>
-          </div>
-          <div>
-            <Notifications />
-            <span>1</span>
-          </div>
         </IconsContainer>
       </FlexRight>
       <Profile>
-        {user && <p>{user.username}</p>}
+        {user.id && <p>{user.username}</p>}
         <ProfileImg
-          src={images + ((user && user.profilePicture) || "person/noAvatar.png")}
+          src={images + ((user.id && user.profilePicture) || "person/noAvatar.png")}
           alt='profilePicture'
         />
       </Profile>

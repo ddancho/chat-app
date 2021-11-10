@@ -16,7 +16,7 @@ export default function DropdownMenu({ handleFileUpload, handleLogout, children 
       }
     };
 
-    if (user.length === 0) {
+    if (!user.id) {
       setIsActive(false);
     }
 
@@ -28,7 +28,7 @@ export default function DropdownMenu({ handleFileUpload, handleLogout, children 
   }, [isActive, user]);
 
   const handleClick = () => {
-    if (user.length === 0) {
+    if (!user.id) {
       return false;
     }
     setIsActive(!isActive);

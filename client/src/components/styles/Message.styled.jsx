@@ -3,7 +3,7 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: ${({ own }) => (own ? "flex-start" : "flex-end")};
+  align-items: ${({ own }) => (own ? "flex-end" : "flex-start")};
 `;
 
 export const Top = styled.div`
@@ -21,8 +21,8 @@ export const Top = styled.div`
   & > p {
     padding: 10px;
     border-radius: 20px;
-    background-color: ${({ own }) => (own ? "#1877f2" : "#ccd3dd")};
-    color: ${({ own }) => (own ? "white" : "black")};
+    background-color: ${({ own }) => (own ? "#ccd3dd" : "#1877f2")};
+    color: ${({ own }) => (own ? "black" : "white")};
     max-width: 300px;
   }
 `;

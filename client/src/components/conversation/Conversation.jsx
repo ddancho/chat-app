@@ -1,13 +1,24 @@
 import { Container } from "../styles/Conversation.styled";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
-export default function Conversation() {
+export default function Conversation({ conversation, user }) {
+  const images = process.env.REACT_APP_PUBLIC_IMAGES;
+  const [member, setMember] = useState(null);
+
+  useEffect(() => {
+    const memberId = conversation.members.split(",").find((m) => m !== user.id);
+
+    axios
+      .get("/api/v1/users/" + memberId)
+      .then((res) => setMember(res.data))
+      .catch((err) => console.log(err));
+  }, [conversation, user]);
+
   return (
     <Container>
-      <img
-        src='https://cdn.pixabay.com/photo/2017/02/07/00/44/feedback-2044700_960_720.jpg'
-        alt='conversation'
-      />
-      <span>conversation</span>
+      <img src={images + ((member && member.profilePicture) || "person/noAvatar.png")} alt='conversation' />
+      <span>{(member && member.username) || ""}</span>
     </Container>
   );
 }

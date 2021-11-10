@@ -28,7 +28,7 @@ export const Content = styled.div`
     justify-content: space-between;
 
     h2 {
-      color: ${(status) => ("error" ? "red" : "green")};
+      color: ${(status) => (status === "error" ? "red" : "green")};
       text-transform: capitalize;
       margin-bottom: 10px;
     }
