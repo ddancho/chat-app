@@ -5,7 +5,7 @@ const userSession = (req, res) => {
     if (!req.session || !req.session.user) {
       user = {
         userInfo: {},
-        currentConversation: {},
+        lastOpenConversation: {},
       };
     } else {
       user = {
@@ -30,4 +30,18 @@ const userSession = (req, res) => {
   }
 };
 
-module.exports = { userSession };
+const userConversationSession = (req, res) => {
+  try {
+    if (req.session && req.session.user) {
+      req.session.user.current_id = parseInt(req.body.conversationId);
+      req.session.user.current_members = req.body.members;
+      return res.status(201).json(1);
+    }
+
+    res.status(200).json(0);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+module.exports = { userSession, userConversationSession };

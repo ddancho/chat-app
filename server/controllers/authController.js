@@ -69,10 +69,17 @@ const login = async (req, res) => {
     }
 
     if (user.is_logged) {
+      if (req.session && req.session.user) {
+        req.session.user = null;
+      }
+
       return res.status(422).json({ emailErrors: ["Email is already login"] });
     }
 
     await db.updateUser(user.id, { is_logged: true });
+
+    // meh
+    user.is_logged = 1;
 
     req.session.user = user;
 

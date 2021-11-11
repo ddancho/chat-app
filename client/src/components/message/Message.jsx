@@ -2,11 +2,13 @@ import { Container, Top, Bottom } from "../styles/Message.styled";
 import TimeAgo from "react-timeago";
 
 export default function Message({ own, message }) {
+  const images = process.env.REACT_APP_PUBLIC_IMAGES;
+
   return (
     <Container own={own}>
       <Top own={own}>
         <img
-          src='https://cdn.pixabay.com/photo/2016/06/15/15/25/loudspeaker-1459128_960_720.png'
+          src={images + ((message.id && message.sender_profile_picture) || "person/noAvatar.png")}
           alt='message'
         />
         <p>{message.text}</p>

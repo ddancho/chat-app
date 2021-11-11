@@ -4,23 +4,29 @@ const dbUser = require("../services/user");
 const createMessage = async (req, res) => {
   try {
     if (req.chatErrors.length > 0) {
-      const senderIdErrors = [];
-      const textErrors = [];
       const conversationIdErrors = [];
+      const senderIdErrors = [];
+      const senderNameErrors = [];
+      const senderProfilePictureErrors = [];
+      const textErrors = [];
 
       req.chatErrors.forEach((error) => {
-        error["senderId"] && senderIdErrors.push(error["senderId"]);
-        error["text"] && textErrors.push(error["text"]);
         error["conversationId"] && conversationIdErrors.push(error["conversationId"]);
+        error["senderId"] && senderIdErrors.push(error["senderId"]);
+        error["senderName"] && senderNameErrors.push(error["senderName"]);
+        error["senderProfilePicture"] && senderProfilePictureErrors.push(error["senderProfilePicture"]);
+        error["text"] && textErrors.push(error["text"]);
       });
 
       return res.status(422).json({ senderIdErrors, textErrors, conversationIdErrors });
     }
 
     const message = {
-      sender_id: req.body.senderId,
-      text: req.body.text,
       conversation_id: req.body.conversationId,
+      sender_id: req.body.senderId,
+      sender_name: req.body.senderName,
+      sender_profile_picture: req.body.senderProfilePicture,
+      text: req.body.text,
     };
 
     const id = await db.createMessage(message);

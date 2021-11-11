@@ -11,9 +11,12 @@ const slice = createSlice({
       state.userInfo = Object.assign({}, action.payload.userInfo);
       state.lastOpenConversation = Object.assign({}, action.payload.lastOpenConversation);
     },
+    updateUserConversation: (state, action) => {
+      state.lastOpenConversation = Object.assign({}, action.payload);
+    },
   },
 });
 
 export default slice.reducer;
 
-export const { getUser } = slice.actions;
+export const { getUser, updateUserConversation } = slice.actions;

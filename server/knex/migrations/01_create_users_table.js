@@ -9,7 +9,6 @@ exports.up = function (knex) {
     table.boolean("is_logged").defaultTo(false);
     table.timestamp("created_at").defaultTo(knex.fn.now());
     table.timestamp("updated_at").defaultTo(knex.fn.now());
-    table.foreign("current_conversation_id").references("id").inTable("conversations");
   });
 };
 
