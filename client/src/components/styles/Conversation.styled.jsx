@@ -6,6 +6,7 @@ export const Container = styled.div`
   padding: 10px;
   cursor: pointer;
   margin-top: 20px;
+  border-left: ${({ isSelected }) => (isSelected ? "4px solid #1877f2" : "4px solid #f0f2f5")};
 
   &:hover {
     background-color: #c2e7ba;

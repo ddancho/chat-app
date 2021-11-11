@@ -15,7 +15,7 @@ const userSession = (req, res) => {
           email: req.session.user.email,
           profilePicture: req.session.user.profile_picture,
         },
-        currentConversation: req.session.user.current_id
+        lastOpenConversation: req.session.user.current_id
           ? {
               id: req.session.user.current_id,
               members: req.session.user.current_members,

@@ -23,7 +23,7 @@ export default function Home() {
   const [newMessage, setNewMessage] = useState("");
   const scrollToLastMsg = useRef();
 
-  const { userInfo: user } = useSelector((state) => state.user);
+  const { userInfo: user, lastOpenConversation } = useSelector((state) => state.user);
 
   useEffect(() => {
     user.id &&
@@ -34,12 +34,17 @@ export default function Home() {
   }, [user]);
 
   useEffect(() => {
-    currentConversation &&
+    lastOpenConversation?.id && setCurrentConversation(lastOpenConversation);
+  }, [lastOpenConversation]);
+
+  useEffect(() => {
+    if (user?.id && currentConversation?.id) {
       axios
         .get("/api/v1/messages/" + currentConversation.id)
         .then((res) => setMessages(res.data))
         .catch((err) => console.log(err));
-  }, [currentConversation]);
+    }
+  }, [user, currentConversation]);
 
   useEffect(() => {
     scrollToLastMsg.current && scrollToLastMsg.current.scrollIntoView({ behavior: "smooth" });
@@ -60,7 +65,7 @@ export default function Home() {
       })
       .catch((err) => {
         if (err.response.status === 422) {
-          console.log("it is 422");
+          console.log("it is 422", err.response);
         } else {
           console.log(err);
         }
@@ -111,13 +116,17 @@ export default function Home() {
           {user.id &&
             conversations.map((conversation) => (
               <div key={conversation.id} onClick={() => setCurrentConversation(conversation)}>
-                <Conversation conversation={conversation} user={user} />
+                <Conversation
+                  conversation={conversation}
+                  user={user}
+                  isSelected={conversation.id === currentConversation.id}
+                />
               </div>
             ))}
         </div>
       </Menu>
       <Chat>
-        {currentConversation ? (
+        {user.id && currentConversation ? (
           <div>
             <Top>
               {messages.map((message) => (

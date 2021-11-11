@@ -56,8 +56,9 @@ export const FlexRight = styled.div`
   flex: 4;
   display: flex;
   align-items: center;
-  justify-content: space-evenly;
+  justify-content: flex-end;
   color: white;
+  margin-right: 20px;
 `;
 
 export const LinksContainer = styled.div`
@@ -85,9 +86,10 @@ export const IconsContainer = styled.div`
 `;
 
 export const Profile = styled.div`
+  flex: 1;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   margin-right: 10px;
 
   & > p {
@@ -101,5 +103,4 @@ export const ProfileImg = styled.img`
   height: 32px;
   border-radius: 50%;
   object-fit: cover;
-  margin-right: 25px;
 `;

@@ -4,12 +4,12 @@ const slice = createSlice({
   name: "user",
   initialState: {
     userInfo: {},
-    currentConversation: {},
+    lastOpenConversation: {},
   },
   reducers: {
     getUser: (state, action) => {
       state.userInfo = Object.assign({}, action.payload.userInfo);
-      state.currentConversation = Object.assign({}, action.payload.currentConversation);
+      state.lastOpenConversation = Object.assign({}, action.payload.lastOpenConversation);
     },
   },
 });

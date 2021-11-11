@@ -1,7 +1,22 @@
 const db = require("../services/message");
+const dbUser = require("../services/user");
 
 const createMessage = async (req, res) => {
   try {
+    if (req.chatErrors.length > 0) {
+      const senderIdErrors = [];
+      const textErrors = [];
+      const conversationIdErrors = [];
+
+      req.chatErrors.forEach((error) => {
+        error["senderId"] && senderIdErrors.push(error["senderId"]);
+        error["text"] && textErrors.push(error["text"]);
+        error["conversationId"] && conversationIdErrors.push(error["conversationId"]);
+      });
+
+      return res.status(422).json({ senderIdErrors, textErrors, conversationIdErrors });
+    }
+
     const message = {
       sender_id: req.body.senderId,
       text: req.body.text,
@@ -25,8 +40,9 @@ const getAllMessages = async (req, res) => {
       return res.status(404).json({ error: "Messages not found" });
     }
 
-    // req.params.conversationId je currentConversation na frontu
-    // update current_conversation_id na useru
+    await dbUser.updateUser(req.session.user.id, {
+      current_conversation_id: parseInt(req.params.conversationId),
+    });
 
     return res.status(200).json(messages);
   } catch (err) {
