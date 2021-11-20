@@ -31,6 +31,16 @@ const user = {
   getUserByUsername(username) {
     return knex("users").whereRaw("username = ?", [username]).first("*");
   },
+  getAllUsers(limit, offset) {
+    return knex("users").select(
+      "users.id",
+      "users.username",
+      "users.email",
+      "users.profile_picture",
+      "users.current_conversation_id",
+      "users.is_logged"
+    );
+  },
 };
 
 module.exports = user;

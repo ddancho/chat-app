@@ -15,9 +15,10 @@ import DropdownMenu from "../dropdownmenu/DropdownMenu";
 import Modal from "../modal/Modal";
 import { Search, Person } from "@material-ui/icons";
 import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserInfo } from "../../redux/getUserInfo";
+import { io } from "socket.io-client";
 import axios from "axios";
 
 export default function Topbar() {
@@ -35,11 +36,24 @@ export default function Topbar() {
 
   const { userInfo: user } = useSelector((state) => state.user);
 
+  const socket = useRef();
+
+  useEffect(() => {
+    if (user.id) {
+      socket.current = io("http://localhost/", {
+        path: "/socket.io",
+        transports: ["websocket"],
+        upgrade: false,
+      });
+    }
+  }, [user]);
+
   const handleLogout = () => {
     setTimeout(() => {
       axios
         .get("/api/v1/auth/logout")
         .then((res) => {
+          socket.current.emit("removeUser", user.id);
           setIsLogout(true);
         })
         .catch((err) => console.log(err));

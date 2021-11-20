@@ -14,6 +14,7 @@ export default function Message({ own, message }) {
         <p>{message.text}</p>
       </Top>
       <Bottom>
+        <p>{message.sender_name}</p>
         <TimeAgo date={message.created_at} />
       </Bottom>
     </Container>

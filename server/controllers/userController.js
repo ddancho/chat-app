@@ -18,6 +18,16 @@ const getUser = async (req, res) => {
   }
 };
 
+const getAllUsers = async (req, res) => {
+  try {
+    const users = (await db.getAllUsers()) || [];
+
+    return res.status(200).json(users);
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+};
+
 const updateUser = async (req, res) => {
   const userId = req.body.id;
   const id = req.params.id;
@@ -68,6 +78,7 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
   getUser,
+  getAllUsers,
   updateUser,
   deleteUser,
 };

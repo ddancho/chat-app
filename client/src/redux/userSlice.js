@@ -5,6 +5,7 @@ const slice = createSlice({
   initialState: {
     userInfo: {},
     lastOpenConversation: {},
+    msgInfo: {},
   },
   reducers: {
     getUser: (state, action) => {
@@ -14,9 +15,12 @@ const slice = createSlice({
     updateUserConversation: (state, action) => {
       state.lastOpenConversation = Object.assign({}, action.payload);
     },
+    updateMsg: (state, action) => {
+      state.msgInfo = Object.assign({}, action.payload);
+    },
   },
 });
 
 export default slice.reducer;
 
-export const { getUser, updateUserConversation } = slice.actions;
+export const { getUser, updateUserConversation, updateMsg } = slice.actions;

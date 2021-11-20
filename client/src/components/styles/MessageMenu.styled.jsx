@@ -20,7 +20,7 @@ export const Top = styled.div`
 export const Bottom = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
   margin-top: 5px;
 
   & > textarea {

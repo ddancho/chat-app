@@ -4,22 +4,23 @@ import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import { updateUserConversationInfo } from "../../redux/updateUserConversationInfo";
 import axios from "axios";
+import useAxios from "../../customHooks/useAxios";
 
-export default function ConversationMenu({ handleSetCurrentConveration, currentConversation }) {
+export default function ConversationMenu({ handleSetCurrentConveration }) {
   const [conversations, setConversations] = useState([]);
   const [memberEmail, setMemberEmail] = useState("");
   const [nextConversation, setNextConversation] = useState(null);
   const dispatch = useDispatch();
 
-  const { userInfo: user } = useSelector((state) => state.user);
+  const { userInfo: user, lastOpenConversation: currentConversation } = useSelector((state) => state.user);
+
+  const { isLoading, response } = useAxios("get", "/api/v1/conversations/", user?.id);
 
   useEffect(() => {
-    user.id &&
-      axios
-        .get("/api/v1/conversations/" + user.id)
-        .then((res) => setConversations(res.data))
-        .catch((err) => console.log(err));
-  }, [user]);
+    if (!isLoading) {
+      setConversations(response);
+    }
+  }, [isLoading, response]);
 
   useEffect(() => {
     nextConversation && handleSetCurrentConveration(nextConversation);
@@ -71,8 +72,9 @@ export default function ConversationMenu({ handleSetCurrentConveration, currentC
             <span>Login to create a new conversation</span>
           </NoConversation>
         )}
-        {user.id &&
-          conversations.map((conversation) => (
+        {!isLoading &&
+          user.id &&
+          conversations?.map((conversation) => (
             <div key={conversation.id} onClick={() => setNextConversation(conversation)}>
               <Conversation
                 conversation={conversation}

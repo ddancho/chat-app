@@ -21,13 +21,26 @@ export const Top = styled.div`
   & > p {
     padding: 10px;
     border-radius: 20px;
-    background-color: ${({ own }) => (own ? "#ccd3dd" : "#1877f2")};
+    background-color: ${({ own }) => (own ? "#ccd3dd" : "#4276b9")};
     color: ${({ own }) => (own ? "black" : "white")};
     max-width: 300px;
   }
 `;
 
 export const Bottom = styled.div`
-  font-size: 12px;
-  margin-top: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 6px;
+
+  & > p {
+    font-size: 14px;
+    font-weight: 200;
+    margin-right: 4px;
+  }
+
+  & > time {
+    font-size: 14px;
+    font-weight: 400;
+  }
 `;

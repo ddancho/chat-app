@@ -3,22 +3,36 @@ import Message from "../message/Message";
 import { useSelector } from "react-redux";
 import { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import useAxios from "../../customHooks/useAxios";
 
-export default function MessageMenu({ currentConversation }) {
+export default function MessageMenu({ socket }) {
   const [messages, setMessages] = useState([]);
-  const [newMessage, setNewMessage] = useState("");
+  const [newMessageText, setNewMessageText] = useState("");
   const scrollToLastMsg = useRef();
 
-  const { userInfo: user } = useSelector((state) => state.user);
+  const {
+    userInfo: user,
+    lastOpenConversation: currentConversation,
+    msgInfo,
+  } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (user?.id && currentConversation?.id) {
-      axios
-        .get("/api/v1/messages/" + currentConversation.id)
-        .then((res) => setMessages(res.data))
-        .catch((err) => console.log(err));
+    if (
+      msgInfo?.msg &&
+      currentConversation?.id === parseInt(msgInfo.msg.conversation_id) &&
+      currentConversation?.members.includes(msgInfo.senderId)
+    ) {
+      setMessages((prev) => [...prev, msgInfo.msg]);
     }
-  }, [user, currentConversation]);
+  }, [msgInfo, currentConversation]);
+
+  const { isLoading, response } = useAxios("get", "/api/v1/messages/", currentConversation?.id);
+
+  useEffect(() => {
+    if (!isLoading) {
+      setMessages(response);
+    }
+  }, [isLoading, response]);
 
   useEffect(() => {
     scrollToLastMsg.current && scrollToLastMsg.current.scrollIntoView({ behavior: "smooth" });
@@ -31,25 +45,29 @@ export default function MessageMenu({ currentConversation }) {
       senderId: user.id,
       senderName: user.username,
       senderProfilePicture: user.profilePicture,
-      text: newMessage,
+      text: newMessageText,
       conversationId: currentConversation.id,
     };
-
     axios
       .post("/api/v1/messages", message)
       .then((res) => {
         setMessages([...messages, res.data]);
-        setNewMessage("");
+        setNewMessageText("");
+        socket.current.emit("sendMessage", {
+          senderId: user.id,
+          receiverId: currentConversation.members.split(",").find((id) => id !== user.id),
+          msg: res.data,
+        });
       })
       .catch((err) => console.log(err));
   };
 
   return (
     <Chat>
-      {user.id && currentConversation ? (
+      {!isLoading && user?.id ? (
         <div>
           <Top>
-            {messages.map((message) => (
+            {messages?.map((message) => (
               <div ref={scrollToLastMsg} key={message.id}>
                 <Message message={message} own={message.sender_id === user.id} />
               </div>
@@ -58,8 +76,8 @@ export default function MessageMenu({ currentConversation }) {
           <Bottom>
             <textarea
               placeholder='write something...'
-              onChange={(e) => setNewMessage(e.target.value)}
-              value={newMessage}
+              onChange={(e) => setNewMessageText(e.target.value)}
+              value={newMessageText}
             ></textarea>
             <button onClick={handleMsgSubmit}>send</button>
           </Bottom>
