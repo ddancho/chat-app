@@ -6,7 +6,7 @@ import { updateUserConversationInfo } from "../../redux/updateUserConversationIn
 import axios from "axios";
 import useAxios from "../../customHooks/useAxios";
 
-export default function ConversationMenu({ handleSetCurrentConveration }) {
+export default function ConversationMenu() {
   const [conversations, setConversations] = useState([]);
   const [memberEmail, setMemberEmail] = useState("");
   const [nextConversation, setNextConversation] = useState(null);
@@ -35,10 +35,9 @@ export default function ConversationMenu({ handleSetCurrentConveration }) {
   }, [isLoading, response]);
 
   useEffect(() => {
-    nextConversation && handleSetCurrentConveration(nextConversation);
     nextConversation && dispatch(updateUserConversationInfo(nextConversation));
     nextConversation && setNextConversation(null);
-  }, [nextConversation, handleSetCurrentConveration, dispatch]);
+  }, [nextConversation, dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
