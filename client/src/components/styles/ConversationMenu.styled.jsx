@@ -15,7 +15,6 @@ export const CreateConversation = styled.form`
   flex-direction: column;
   justify-content: center;
   margin: 20px 10px;
-  padding-bottom: 30px;
   border-bottom: 1px solid lightgray;
 
   & > p {
@@ -63,5 +62,17 @@ export const NoConversation = styled.div`
     color: #726f6f;
     cursor: default;
     text-align: center;
+  }
+`;
+
+export const ErrMsg = styled.div`
+  display: flex;
+  height: 14px;
+  margin: 10px 0;
+  color: red;
+  font-size: 12px;
+
+  & > p {
+    visibility: ${({ showMsg }) => showMsg};
   }
 `;

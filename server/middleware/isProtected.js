@@ -3,12 +3,11 @@ const isProtected = (req, res, next) => {
 
   if (user === undefined || user === null) {
     return res.status(401).json({
-      status: false,
-      msg: "unauthorized",
+      errors: ["unauthorized"],
     });
   }
 
   next();
 };
 
-module.exports = isProtected;
+module.exports = { isProtected };

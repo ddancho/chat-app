@@ -1,4 +1,4 @@
-import { Menu, CreateConversation, NoConversation } from "../styles/ConversationMenu.styled";
+import { Menu, CreateConversation, NoConversation, ErrMsg } from "../styles/ConversationMenu.styled";
 import Conversation from "../conversation/Conversation";
 import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
@@ -10,11 +10,17 @@ export default function ConversationMenu({ handleSetCurrentConveration }) {
   const [conversations, setConversations] = useState([]);
   const [memberEmail, setMemberEmail] = useState("");
   const [nextConversation, setNextConversation] = useState(null);
+  const [createConversationErrors, setCreateConversationErrors] = useState(null);
+
   const dispatch = useDispatch();
 
   const { userInfo: user, lastOpenConversation: currentConversation } = useSelector((state) => state.user);
 
   const { isLoading, response, error } = useAxios("get", "/api/v1/conversations/", user?.id);
+
+  useEffect(() => {
+    setCreateConversationErrors(null);
+  }, []);
 
   useEffect(() => {
     if (error && error.status !== 404) {
@@ -46,14 +52,16 @@ export default function ConversationMenu({ handleSetCurrentConveration }) {
       .then((res) => {
         setConversations([...conversations, res.data]);
         setMemberEmail("");
+        setCreateConversationErrors(null);
       })
       .catch((err) => {
-        if (err.response.status === 422) {
-          console.log("it is 422", err.response);
+        if (err.response.status === 401) {
+          setCreateConversationErrors(err.response.data.errors);
+        } else if (err.response.status === 422) {
+          setCreateConversationErrors(err.response.data.emailErrors);
         } else {
-          console.log(err);
+          setCreateConversationErrors(["Please try again later..."]);
         }
-        setMemberEmail("");
       });
   };
 
@@ -65,13 +73,17 @@ export default function ConversationMenu({ handleSetCurrentConveration }) {
             <p>Create new conversation...</p>
             <div>
               <input
-                type='email'
+                type='text'
                 placeholder='write your friend email address...'
                 value={memberEmail}
                 onChange={(e) => setMemberEmail(e.target.value)}
               />
+
               <button type='submit'>create</button>
             </div>
+            <ErrMsg showMsg={createConversationErrors?.length > 0 ? "visible" : "hidden"}>
+              <p>{(createConversationErrors?.length > 0 && createConversationErrors[0]) || 0}</p>
+            </ErrMsg>
           </CreateConversation>
         ) : (
           <NoConversation>
