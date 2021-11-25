@@ -83,7 +83,7 @@ const login = async (req, res) => {
 
     req.session.user = user;
 
-    res.status(200).json(1);
+    res.status(200).json({ userId: user.id });
   } catch (err) {
     res.status(500).json(err);
   }

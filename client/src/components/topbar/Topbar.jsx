@@ -2,9 +2,6 @@ import {
   Container,
   Flex,
   Logo,
-  SearchBar,
-  SearchBarIcon,
-  SearchBarInput,
   FlexRight,
   LinksContainer,
   IconsContainer,
@@ -13,12 +10,14 @@ import {
 } from "../styles/TopBar.styled";
 import DropdownMenu from "../dropdownmenu/DropdownMenu";
 import Modal from "../modal/Modal";
-import { Search, Person } from "@material-ui/icons";
+import { Person } from "@material-ui/icons";
 import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserInfo } from "../../redux/getUserInfo";
+import { updateUsersOnline, updateMsg, updateUserNewUpload } from "../../redux/userSlice";
 import { io } from "socket.io-client";
+import useOnSocketEvent from "../../customHooks/useOnSocketEvent";
 import axios from "axios";
 
 export default function Topbar() {
@@ -39,14 +38,41 @@ export default function Topbar() {
   const socket = useRef();
 
   useEffect(() => {
-    if (user.id) {
-      socket.current = io("http://localhost/", {
-        path: "/socket.io",
-        transports: ["websocket"],
-        upgrade: false,
-      });
-    }
+    socket.current = io("http://localhost/", {
+      path: "/socket.io",
+      transports: ["websocket"],
+      upgrade: false,
+    });
+    socket.current.emit("getContactsOnline");
+  }, []);
+
+  useEffect(() => {
+    socket.current.emit("addUser", user?.id);
   }, [user]);
+
+  const { response: contactsOnline } = useOnSocketEvent({
+    socket: socket.current,
+    event: "contactsOnline",
+  });
+  useEffect(() => {
+    dispatch(updateUsersOnline(contactsOnline));
+  }, [contactsOnline, dispatch]);
+
+  const { response: contactsUpdated } = useOnSocketEvent({
+    socket: socket.current,
+    event: "contactsUpdated",
+  });
+  useEffect(() => {
+    dispatch(updateUsersOnline(contactsUpdated));
+  }, [contactsUpdated, dispatch]);
+
+  const { response: onGetMessageData } = useOnSocketEvent({
+    socket: socket?.current,
+    event: "getMessage",
+  });
+  useEffect(() => {
+    dispatch(updateMsg(onGetMessageData));
+  }, [onGetMessageData, dispatch]);
 
   const handleLogout = () => {
     setTimeout(() => {
@@ -65,15 +91,15 @@ export default function Topbar() {
     formData.append("file", fileToUpload[0]);
     axios
       .post("/api/v1/upload", formData, { headers: { "content-type": "multipart/form-data" } })
-      .then((res) =>
+      .then((res) => {
+        dispatch(updateUserNewUpload(res.data));
         setModal({
           show: true,
           status: "success",
           text: "New profile picture is uploaded.",
-        })
-      )
+        });
+      })
       .catch((err) => {
-        console.log(err.response);
         if (err.response.status === 413) {
           // check status 413 req entity too large
           return setModal({
@@ -104,14 +130,6 @@ export default function Topbar() {
         <Link to='/'>
           <Logo>Chat App</Logo>
         </Link>
-      </Flex>
-      <Flex value={5}>
-        <SearchBar>
-          <SearchBarIcon>
-            <Search />
-          </SearchBarIcon>
-          <SearchBarInput placeholder='Search for friend' />
-        </SearchBar>
       </Flex>
       <FlexRight>
         {!user.id && (

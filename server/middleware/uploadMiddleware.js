@@ -34,8 +34,8 @@ const fileFilter = (req, file, cb) => {
     return cb(null, false);
   }
 
-  if (req.session.user.profilePicture !== "person/noAvatar.png") {
-    const oldFile = "public/images/" + req.session.user.profilePicture;
+  if (req.session.user.profile_picture !== "person/noAvatar.png") {
+    const oldFile = "public/images/" + req.session.user.profile_picture;
     fs.access(oldFile, fs.constants.F_OK, (err) => {
       if (!err) {
         fs.unlink(oldFile, (err) => err && console.log(err));

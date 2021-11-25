@@ -32,6 +32,10 @@ const getUser = (userId) => {
 };
 
 io.on("connection", (socket) => {
+  socket.on("getContactsOnline", () => {
+    io.emit("contactsOnline", users);
+  });
+
   socket.on("addUser", (userId) => {
     if (userId) {
       console.log("user connected...");

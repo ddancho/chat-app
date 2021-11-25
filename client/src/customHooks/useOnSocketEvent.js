@@ -1,18 +1,14 @@
 import { useState, useEffect } from "react";
 
-const useOnSocketEvent = ({ socket = null, event = null }) => {
+const useOnSocketEvent = ({ socket, event }) => {
   const [response, setResponse] = useState(null);
 
   useEffect(() => {
-    const abortController = new AbortController();
-
     if (socket && event) {
       socket.on(event, (data) => setResponse(data));
     }
-
     return () => {
       setResponse(null);
-      abortController.abort();
     };
   }, [socket, event]);
 

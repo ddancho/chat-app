@@ -14,10 +14,16 @@ export default function ConversationMenu({ handleSetCurrentConveration }) {
 
   const { userInfo: user, lastOpenConversation: currentConversation } = useSelector((state) => state.user);
 
-  const { isLoading, response } = useAxios("get", "/api/v1/conversations/", user?.id);
+  const { isLoading, response, error } = useAxios("get", "/api/v1/conversations/", user?.id);
 
   useEffect(() => {
-    if (!isLoading) {
+    if (error && error.status !== 404) {
+      console.log(error.data);
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (!isLoading && response) {
       setConversations(response);
     }
   }, [isLoading, response]);
@@ -54,7 +60,7 @@ export default function ConversationMenu({ handleSetCurrentConveration }) {
   return (
     <Menu>
       <div>
-        {user.id ? (
+        {!isLoading && user.id ? (
           <CreateConversation onSubmit={handleSubmit} autoComplete='off'>
             <p>Create new conversation...</p>
             <div>

@@ -7,14 +7,12 @@ const createMessage = async (req, res) => {
       const conversationIdErrors = [];
       const senderIdErrors = [];
       const senderNameErrors = [];
-      const senderProfilePictureErrors = [];
       const textErrors = [];
 
       req.chatErrors.forEach((error) => {
         error["conversationId"] && conversationIdErrors.push(error["conversationId"]);
         error["senderId"] && senderIdErrors.push(error["senderId"]);
         error["senderName"] && senderNameErrors.push(error["senderName"]);
-        error["senderProfilePicture"] && senderProfilePictureErrors.push(error["senderProfilePicture"]);
         error["text"] && textErrors.push(error["text"]);
       });
 
@@ -25,13 +23,12 @@ const createMessage = async (req, res) => {
       conversation_id: req.body.conversationId,
       sender_id: req.body.senderId,
       sender_name: req.body.senderName,
-      sender_profile_picture: req.body.senderProfilePicture,
       text: req.body.text,
     };
 
     const id = await db.createMessage(message);
 
-    const newMessage = await db.getMessageById(id);
+    const newMessage = await db.getMessageById(id[0]);
 
     res.status(201).json(newMessage);
   } catch (err) {
@@ -41,8 +38,8 @@ const createMessage = async (req, res) => {
 
 const getAllMessages = async (req, res) => {
   try {
-    const messages = await db.getAllMessagesByConversationId(req.params.conversationId);
-    if (!messages) {
+    const messages = await db.getAllMessagesByConversationId(parseInt(req.params.conversationId));
+    if (messages.length === 0) {
       return res.status(404).json({ error: "Messages not found" });
     }
 

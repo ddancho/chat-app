@@ -3,8 +3,6 @@ import { Container } from "../styles/Contact.styled";
 export default function Contact({ contact, isOnline }) {
   const images = process.env.REACT_APP_PUBLIC_IMAGES;
 
-  isOnline && console.log("user " + contact.username + " is " + isOnline);
-
   return (
     <Container isOn={isOnline}>
       <div>

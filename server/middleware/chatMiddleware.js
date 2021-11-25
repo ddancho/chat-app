@@ -45,15 +45,6 @@ const createMessageRules = () => {
       .withMessage("Value must be at least 1 chars long")
       .trim()
       .escape(),
-    body("senderProfilePicture")
-      .notEmpty()
-      .withMessage("Value is required")
-      .isString()
-      .withMessage("Value must be only alphabetical chars")
-      .isLength({ min: 1 })
-      .withMessage("Value must be at least 1 chars long")
-      .trim()
-      .escape(),
     body("text")
       .notEmpty()
       .withMessage("Value is required")
@@ -61,8 +52,7 @@ const createMessageRules = () => {
       .withMessage("Value must be only alphabetical chars")
       .isLength({ min: 1 })
       .withMessage("Value must be at least 1 chars long")
-      .trim()
-      .escape(),
+      .trim(),
     body("conversationId")
       .notEmpty()
       .withMessage("Value is required")

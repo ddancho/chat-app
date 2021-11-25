@@ -1,20 +1,44 @@
 import { Chat, Top, Bottom, NoConversation } from "../styles/MessageMenu.styled";
 import Message from "../message/Message";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
+import { updateMsg } from "../../redux/userSlice";
 import axios from "axios";
 import useAxios from "../../customHooks/useAxios";
 
-export default function MessageMenu({ socket }) {
+export default function MessageMenu() {
   const [messages, setMessages] = useState([]);
   const [newMessageText, setNewMessageText] = useState("");
   const scrollToLastMsg = useRef();
+  const socket = useRef();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    socket.current = io("http://localhost/", {
+      path: "/socket.io",
+      transports: ["websocket"],
+      upgrade: false,
+    });
+  }, []);
 
   const {
     userInfo: user,
     lastOpenConversation: currentConversation,
     msgInfo,
+    userNewUpload,
   } = useSelector((state) => state.user);
+
+  const { isLoading, response, error } = useAxios("get", "/api/v1/messages/", currentConversation?.id);
+
+  useEffect(() => {
+    if (!isLoading && !response && error) {
+      setMessages([]);
+    }
+    if (!isLoading && response) {
+      setMessages(response);
+    }
+  }, [isLoading, response, error]);
 
   useEffect(() => {
     if (
@@ -23,20 +47,24 @@ export default function MessageMenu({ socket }) {
       currentConversation?.members.includes(msgInfo.senderId)
     ) {
       setMessages((prev) => [...prev, msgInfo.msg]);
+      dispatch(updateMsg(null));
     }
-  }, [msgInfo, currentConversation]);
-
-  const { isLoading, response } = useAxios("get", "/api/v1/messages/", currentConversation?.id);
-
-  useEffect(() => {
-    if (!isLoading) {
-      setMessages(response);
-    }
-  }, [isLoading, response]);
+  }, [msgInfo, currentConversation, dispatch]);
 
   useEffect(() => {
     scrollToLastMsg.current && scrollToLastMsg.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  useEffect(() => {
+    if (userNewUpload && messages?.length > 0) {
+      let msgs = messages.filter(
+        (m) =>
+          parseInt(m.sender_id) === userNewUpload.userId &&
+          m.sender_profile_picture !== userNewUpload.profilePicture
+      );
+      msgs.forEach((m) => (m.sender_profile_picture = userNewUpload.profilePicture));
+    }
+  }, [userNewUpload, messages]);
 
   const handleMsgSubmit = (e) => {
     e.preventDefault();
@@ -48,6 +76,7 @@ export default function MessageMenu({ socket }) {
       text: newMessageText,
       conversationId: currentConversation.id,
     };
+
     axios
       .post("/api/v1/messages", message)
       .then((res) => {
@@ -64,14 +93,20 @@ export default function MessageMenu({ socket }) {
 
   return (
     <Chat>
-      {!isLoading && user?.id ? (
+      {(!isLoading && user?.id && (
         <div>
           <Top>
-            {messages?.map((message) => (
-              <div ref={scrollToLastMsg} key={message.id}>
-                <Message message={message} own={message.sender_id === user.id} />
-              </div>
-            ))}
+            {messages?.length > 0 ? (
+              messages.map((message) => (
+                <div ref={scrollToLastMsg} key={message.id}>
+                  <Message message={message} own={message.sender_id === parseInt(user.id)} />
+                </div>
+              ))
+            ) : (
+              <NoConversation>
+                <span>No messages in the current conversation</span>
+              </NoConversation>
+            )}
           </Top>
           <Bottom>
             <textarea
@@ -82,7 +117,7 @@ export default function MessageMenu({ socket }) {
             <button onClick={handleMsgSubmit}>send</button>
           </Bottom>
         </div>
-      ) : (
+      )) || (
         <NoConversation>
           <span>Open a conversation to start a chat</span>
         </NoConversation>

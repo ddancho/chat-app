@@ -15,7 +15,9 @@ const uploadUserProfilePicture = async (req, res) => {
 
     req.session.user.profile_picture = req.profilePictureSlug;
 
-    return res.status(200).json(1);
+    return res
+      .status(200)
+      .json({ userId: req.session.user.id, profilePicture: req.session.user.profile_picture });
   } catch (err) {
     return res.status(500).json(err);
   }
