@@ -16,7 +16,7 @@ export default function ConversationMenu() {
 
   const { userInfo: user, lastOpenConversation: currentConversation } = useSelector((state) => state.user);
 
-  const { isLoading, response, error } = useAxios("get", "/api/v1/conversations/", user?.id);
+  const { isLoading, response, error } = useAxios("get", "/api/v1/conversations/", user.id, user);
 
   useEffect(() => {
     setCreateConversationErrors(null);

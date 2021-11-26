@@ -29,7 +29,12 @@ export default function MessageMenu() {
     userNewUpload,
   } = useSelector((state) => state.user);
 
-  const { isLoading, response, error } = useAxios("get", "/api/v1/messages/", currentConversation?.id);
+  const { isLoading, response, error } = useAxios(
+    "get",
+    "/api/v1/messages/",
+    currentConversation.id,
+    currentConversation
+  );
 
   useEffect(() => {
     if (!isLoading && !response && error) {

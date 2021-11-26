@@ -3,22 +3,22 @@ import axios from "axios";
 
 axios.defaults.baseURL = "http://localhost";
 
-const useAxios = (method, url, params, data) => {
+const useAxios = (method, url, params, dependency) => {
   const [isLoading, setIsLoading] = useState(false);
   const [response, setResponse] = useState(null);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    setIsLoading(true);
-    let Url = url;
-
-    if (typeof params === "string" || typeof params === "number") {
-      Url += params;
-    }
-
     const fetchData = async () => {
       try {
-        const res = await axios({ method, url: Url, data });
+        setIsLoading(true);
+        let Url = url;
+
+        if (typeof params === "string" || typeof params === "number") {
+          Url += params;
+        }
+
+        const res = await axios({ method, url: Url });
         const result = await res?.data;
 
         setResponse(result);
@@ -31,14 +31,16 @@ const useAxios = (method, url, params, data) => {
       }
     };
 
-    fetchData();
+    if ((!params && !dependency) || (params && dependency)) {
+      fetchData();
+    }
 
     return () => {
       setIsLoading(false);
       setResponse(null);
       setError(null);
     };
-  }, [method, url, params, data]);
+  }, [method, url, params, dependency]);
 
   return { isLoading, response, error };
 };
