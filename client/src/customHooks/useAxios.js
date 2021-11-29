@@ -14,7 +14,7 @@ const useAxios = (method, url, params, dependency) => {
         setIsLoading(true);
         let Url = url;
 
-        if (typeof params === "string" || typeof params === "number") {
+        if (params !== null && (typeof params === "string" || typeof params === "number")) {
           Url += params;
         }
 

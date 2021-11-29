@@ -26,7 +26,6 @@ export default function MessageMenu() {
     userInfo: user,
     lastOpenConversation: currentConversation,
     msgInfo,
-    userNewUpload,
   } = useSelector((state) => state.user);
 
   const { isLoading, response, error } = useAxios(
@@ -59,17 +58,6 @@ export default function MessageMenu() {
   useEffect(() => {
     scrollToLastMsg.current && scrollToLastMsg.current.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
-
-  useEffect(() => {
-    if (userNewUpload && messages?.length > 0) {
-      let msgs = messages.filter(
-        (m) =>
-          parseInt(m.sender_id) === userNewUpload.userId &&
-          m.sender_profile_picture !== userNewUpload.profilePicture
-      );
-      msgs.forEach((m) => (m.sender_profile_picture = userNewUpload.profilePicture));
-    }
-  }, [userNewUpload, messages]);
 
   const handleMsgSubmit = (e) => {
     e.preventDefault();

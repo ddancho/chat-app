@@ -3,24 +3,16 @@ import styled from "styled-components";
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: ${({ own }) => (own ? "flex-end" : "flex-start")};
+  align-items: flex-start;
 `;
 
 export const Top = styled.div`
   display: flex;
   margin-top: 20px;
 
-  & > img {
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 10px;
-  }
-
   & > p {
     padding: 10px;
-    border-radius: 20px;
+    border-radius: 10px;
     background-color: ${({ own }) => (own ? "#ccd3dd" : "#4276b9")};
     color: ${({ own }) => (own ? "black" : "white")};
     max-width: 300px;
@@ -43,4 +35,11 @@ export const Bottom = styled.div`
     font-size: 14px;
     font-weight: 400;
   }
+`;
+
+export const BorderLine = styled.div`
+  width: 100%;
+  height: 1px;
+  margin: 10px 0;
+  background: linear-gradient(to right, lightgray, #f0f2f5);
 `;

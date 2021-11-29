@@ -9,7 +9,9 @@ export default function ContactsOnline() {
   const [contacts, setContacts] = useState([]);
   const [contactsOnline, setContactsOnline] = useState([]);
 
-  const { isLoading, response, error } = useAxios("get", "/api/v1/users");
+  const { usersOnline } = useSelector((state) => state.user);
+
+  const { isLoading, response, error } = useAxios("get", "/api/v1/users", null, usersOnline);
 
   useEffect(() => {
     if (error && error.status !== 404) {
@@ -22,17 +24,6 @@ export default function ContactsOnline() {
       setContacts(response);
     }
   }, [isLoading, response]);
-
-  const { usersOnline, userNewUpload } = useSelector((state) => state.user);
-
-  useEffect(() => {
-    if (userNewUpload && contacts?.length > 0) {
-      let i = contacts.findIndex((c) => c.id === userNewUpload.userId);
-      if (i !== -1 && contacts[i].profile_picture !== userNewUpload.profilePicture) {
-        contacts[i].profile_picture = userNewUpload.profilePicture;
-      }
-    }
-  }, [userNewUpload, contacts]);
 
   useEffect(() => {
     setContactsOnline(usersOnline);

@@ -7,7 +7,6 @@ const slice = createSlice({
     lastOpenConversation: {},
     msgInfo: {},
     usersOnline: [],
-    userNewUpload: {},
   },
   reducers: {
     getUser: (state, action) => {
@@ -24,7 +23,7 @@ const slice = createSlice({
       state.usersOnline = action.payload && action.payload.length > 0 ? [...action.payload] : [];
     },
     updateUserNewUpload: (state, action) => {
-      state.userNewUpload = Object.assign({}, action.payload);
+      state.userInfo["profilePicture"] = action.payload.profilePicture;
     },
   },
 });

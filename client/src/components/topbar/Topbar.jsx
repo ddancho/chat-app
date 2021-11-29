@@ -24,14 +24,12 @@ export default function Topbar() {
   const images = process.env.REACT_APP_PUBLIC_IMAGES;
   const [isLogout, setIsLogout] = useState(false);
   const [modal, setModal] = useState({ show: false });
-  const [profilePic, setProfilePic] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getUserInfo());
     setIsLogout(false);
-    setProfilePic(false);
-  }, [isLogout, modal, profilePic, dispatch]);
+  }, [isLogout, dispatch]);
 
   const { userInfo: user } = useSelector((state) => state.user);
 
@@ -121,7 +119,6 @@ export default function Topbar() {
 
   const handleCloseModal = () => {
     setModal({ show: false });
-    setProfilePic(true);
   };
 
   return (
@@ -155,7 +152,7 @@ export default function Topbar() {
           alt='profilePicture'
         />
       </Profile>
-      <Modal modal={modal} handleCloseModal={handleCloseModal} />
+      {modal?.show && <Modal modal={modal} handleCloseModal={handleCloseModal} />}
     </Container>
   );
 }
