@@ -1,6 +1,7 @@
 import { Container, Shadow, Form, ErrMsg, Desc, RegInfo, RegTitle, RegMsg } from "../styles/Register.styled";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { useHistory } from "react-router-dom";
+import { io } from "socket.io-client";
 import axios from "axios";
 
 export default function Register() {
@@ -17,6 +18,16 @@ export default function Register() {
   const [confirmErrors, setConfirmErrors] = useState([]);
   const [serverErrors, setServerErrors] = useState("");
   const [registrationStatus, setRegistrationStatus] = useState(false);
+
+  const socket = useRef();
+
+  useEffect(() => {
+    socket.current = io("http://localhost/", {
+      path: "/socket.io",
+      transports: ["websocket"],
+      upgrade: false,
+    });
+  }, []);
 
   const resetStates = () => {
     setUsernameErrors([]);
@@ -49,6 +60,7 @@ export default function Register() {
       .post("/api/v1/auth/register", user)
       .then((res) => {
         setRegistrationStatus(true);
+        socket.current.emit("newUserRegistered", res.data);
         setTimeout(() => {
           resetStates();
           resetRefs();

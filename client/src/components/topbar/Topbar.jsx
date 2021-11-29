@@ -15,9 +15,8 @@ import { Link } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserInfo } from "../../redux/getUserInfo";
-import { updateUsersOnline, updateMsg, updateUserNewUpload } from "../../redux/userSlice";
+import { updateUserNewUpload } from "../../redux/userSlice";
 import { io } from "socket.io-client";
-import useOnSocketEvent from "../../customHooks/useOnSocketEvent";
 import axios from "axios";
 
 export default function Topbar() {
@@ -25,14 +24,6 @@ export default function Topbar() {
   const [isLogout, setIsLogout] = useState(false);
   const [modal, setModal] = useState({ show: false });
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(getUserInfo());
-    setIsLogout(false);
-  }, [isLogout, dispatch]);
-
-  const { userInfo: user } = useSelector((state) => state.user);
-
   const socket = useRef();
 
   useEffect(() => {
@@ -41,36 +32,14 @@ export default function Topbar() {
       transports: ["websocket"],
       upgrade: false,
     });
-    socket.current.emit("getContactsOnline");
   }, []);
 
   useEffect(() => {
-    socket.current.emit("addUser", user?.id);
-  }, [user]);
+    dispatch(getUserInfo());
+    setIsLogout(false);
+  }, [isLogout, dispatch]);
 
-  const { response: contactsOnline } = useOnSocketEvent({
-    socket: socket.current,
-    event: "contactsOnline",
-  });
-  useEffect(() => {
-    dispatch(updateUsersOnline(contactsOnline));
-  }, [contactsOnline, dispatch]);
-
-  const { response: contactsUpdated } = useOnSocketEvent({
-    socket: socket.current,
-    event: "contactsUpdated",
-  });
-  useEffect(() => {
-    dispatch(updateUsersOnline(contactsUpdated));
-  }, [contactsUpdated, dispatch]);
-
-  const { response: onGetMessageData } = useOnSocketEvent({
-    socket: socket?.current,
-    event: "getMessage",
-  });
-  useEffect(() => {
-    dispatch(updateMsg(onGetMessageData));
-  }, [onGetMessageData, dispatch]);
+  const { userInfo: user } = useSelector((state) => state.user);
 
   const handleLogout = () => {
     setTimeout(() => {

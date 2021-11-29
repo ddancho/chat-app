@@ -1,5 +1,6 @@
 import Globals from "./components/styles/Globals.styled";
 import Topbar from "./components/topbar/Topbar";
+import WsComponent from "./components/wsComponent/WsComponent";
 import Home from "./pages/home/Home";
 import Register from "./pages/register/Register";
 import Login from "./pages/login/Login";
@@ -13,6 +14,7 @@ function App() {
   return (
     <Router>
       <Globals />
+      <WsComponent />
       <Topbar />
       <Switch>
         <Route exact path='/'>

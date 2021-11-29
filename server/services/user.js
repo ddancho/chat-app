@@ -28,6 +28,18 @@ const user = {
         "conversations.members as current_members"
       );
   },
+  getUserInfoByEmail(email) {
+    return knex("users")
+      .whereRaw("email = ?", [email])
+      .first(
+        "users.id",
+        "users.username",
+        "users.email",
+        "users.profile_picture",
+        "users.current_conversation_id",
+        "users.is_logged"
+      );
+  },
   getUserByUsername(username) {
     return knex("users").whereRaw("username = ?", [username]).first("*");
   },

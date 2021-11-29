@@ -32,6 +32,10 @@ const getUser = (userId) => {
 };
 
 io.on("connection", (socket) => {
+  socket.on("newUserRegistered", (user) => {
+    io.emit("newContact", user);
+  });
+
   socket.on("getContactsOnline", () => {
     io.emit("contactsOnline", users);
   });

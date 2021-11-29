@@ -7,6 +7,11 @@ const slice = createSlice({
     lastOpenConversation: {},
     msgInfo: {},
     usersOnline: [],
+    users: {
+      contacts: [],
+      isLoading: false,
+      error: null,
+    },
   },
   reducers: {
     getUser: (state, action) => {
@@ -25,10 +30,35 @@ const slice = createSlice({
     updateUserNewUpload: (state, action) => {
       state.userInfo["profilePicture"] = action.payload.profilePicture;
     },
+    getUsersList: (state, action) => {
+      if (action.payload.contacts.length > 0) {
+        state.users.contacts = [...action.payload.contacts];
+      }
+
+      state.users.isLoading = action.payload.isLoadding || false;
+      state.users.error = action.payload.error || null;
+    },
+    updateUsersList: (state, action) => {
+      if (action.payload.user) {
+        const currentList = state.users.contacts;
+        if (!currentList.some((c) => c.id === action.payload.user.id)) {
+          state.users.contacts = [...currentList, action.payload.user];
+        }
+      }
+      state.users.isLoading = action.payload.isLoadding || false;
+      state.users.error = action.payload.error || null;
+    },
   },
 });
 
 export default slice.reducer;
 
-export const { getUser, updateUserConversation, updateMsg, updateUsersOnline, updateUserNewUpload } =
-  slice.actions;
+export const {
+  getUser,
+  updateUserConversation,
+  updateMsg,
+  updateUsersOnline,
+  updateUserNewUpload,
+  getUsersList,
+  updateUsersList,
+} = slice.actions;

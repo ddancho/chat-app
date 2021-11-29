@@ -35,7 +35,9 @@ const register = async (req, res) => {
 
     await db.createUser(user);
 
-    res.status(201).json(1);
+    const newUser = await db.getUserInfoByEmail(user.email);
+
+    res.status(201).json(newUser);
   } catch (err) {
     res.status(500).json(err);
   }

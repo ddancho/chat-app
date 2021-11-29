@@ -3,27 +3,21 @@ import { Search as SearchUiIcon } from "@material-ui/icons";
 import Contact from "../contact/Contact";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import useAxios from "../../customHooks/useAxios";
 
 export default function ContactsOnline() {
-  const [contacts, setContacts] = useState([]);
   const [contactsOnline, setContactsOnline] = useState([]);
+  const [contacts, setContacts] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const { usersOnline } = useSelector((state) => state.user);
-
-  const { isLoading, response, error } = useAxios("get", "/api/v1/users", null, usersOnline);
-
-  useEffect(() => {
-    if (error && error.status !== 404) {
-      console.log(error.data);
-    }
-  }, [error]);
+  const { usersOnline, users } = useSelector((state) => state.user);
 
   useEffect(() => {
-    if (!isLoading && response) {
-      setContacts(response);
-    }
-  }, [isLoading, response]);
+    setContacts(users.contacts);
+    setIsLoading(users.isLoading);
+    setError(users.error);
+    users.error && console.log("error :", users.error);
+  }, [users]);
 
   useEffect(() => {
     setContactsOnline(usersOnline);
@@ -43,7 +37,7 @@ export default function ContactsOnline() {
           <input placeholder='Search for friend' />
         </Search>
       </SearchContainer>
-      {!isLoading && contacts?.length > 0
+      {!error && !isLoading && contacts?.length > 0
         ? contacts.map((contact) => (
             <Contact
               key={contact.id}
