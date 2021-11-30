@@ -31,7 +31,7 @@ const useAxios = (method, url, params, dependency) => {
       }
     };
 
-    if ((!params && !dependency) || (params && dependency)) {
+    if (params && dependency) {
       fetchData();
     }
 

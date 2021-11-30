@@ -29,11 +29,11 @@ export const CreateConversation = styled.form`
 
     input {
       width: 60%;
-      height: 28px;
+      height: 34px;
       padding-left: 10px;
       margin-right: 10px;
       border-radius: 10px;
-      border: 1px solid gray;
+      border: 1px solid #1877f2;
     }
 
     input:focus {

@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUsersOnline, updateMsg, updateUsersList } from "../../redux/userSlice";
+import { updateUsersOnline, updateMsg, updateUsersList, updateNewConversation } from "../../redux/userSlice";
 import { getUserInfoList } from "../../redux/getUsersListInfo";
 import { io } from "socket.io-client";
 import useOnSocketEvent from "../../customHooks/useOnSocketEvent";
@@ -45,7 +45,7 @@ export default function WsComponent() {
   }, [contactsUpdated, dispatch]);
 
   const { response: onGetMessageData } = useOnSocketEvent({
-    socket: socket?.current,
+    socket: socket.current,
     event: "getMessage",
   });
   useEffect(() => {
@@ -62,5 +62,14 @@ export default function WsComponent() {
     }
   }, [newContact, dispatch]);
 
+  const { response: newConversation } = useOnSocketEvent({
+    socket: socket.current,
+    event: "newConversation",
+  });
+  useEffect(() => {
+    if (newConversation) {
+      dispatch(updateNewConversation(newConversation));
+    }
+  }, [newConversation, dispatch]);
   return <></>;
 }

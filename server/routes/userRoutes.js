@@ -1,11 +1,12 @@
 const router = require("express").Router();
 const userController = require("../controllers/userController");
+const { isProtected } = require("../middleware/isProtected");
 
 router
   .route("/:id")
-  .get(userController.getUser)
-  .put(userController.updateUser)
-  .delete(userController.deleteUser);
+  .get(isProtected, userController.getUser)
+  .put(isProtected, userController.updateUser)
+  .delete(isProtected, userController.deleteUser);
 
 router.get("/", userController.getAllUsers);
 

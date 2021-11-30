@@ -12,6 +12,7 @@ const slice = createSlice({
       isLoading: false,
       error: null,
     },
+    newConversation: {},
   },
   reducers: {
     getUser: (state, action) => {
@@ -48,6 +49,9 @@ const slice = createSlice({
       state.users.isLoading = action.payload.isLoadding || false;
       state.users.error = action.payload.error || null;
     },
+    updateNewConversation: (state, action) => {
+      state.newConversation = Object.assign({}, action.payload);
+    },
   },
 });
 
@@ -61,4 +65,5 @@ export const {
   updateUserNewUpload,
   getUsersList,
   updateUsersList,
+  updateNewConversation,
 } = slice.actions;

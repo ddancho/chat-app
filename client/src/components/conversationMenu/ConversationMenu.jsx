@@ -1,8 +1,10 @@
 import { Menu, CreateConversation, NoConversation, ErrMsg } from "../styles/ConversationMenu.styled";
 import Conversation from "../conversation/Conversation";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { updateUserConversationInfo } from "../../redux/updateUserConversationInfo";
+import { updateUserConversation, updateNewConversation } from "../../redux/userSlice";
+import { io } from "socket.io-client";
 import axios from "axios";
 import useAxios from "../../customHooks/useAxios";
 
@@ -13,26 +15,51 @@ export default function ConversationMenu() {
   const [createConversationErrors, setCreateConversationErrors] = useState(null);
 
   const dispatch = useDispatch();
+  const socket = useRef();
 
-  const { userInfo: user, lastOpenConversation: currentConversation } = useSelector((state) => state.user);
+  useEffect(() => {
+    socket.current = io("http://localhost/", {
+      path: "/socket.io",
+      transports: ["websocket"],
+      upgrade: false,
+    });
+  }, []);
 
-  const { isLoading, response, error } = useAxios("get", "/api/v1/conversations/", user.id, user);
+  const {
+    userInfo: user,
+    lastOpenConversation: currentConversation,
+    newConversation,
+  } = useSelector((state) => state.user);
+
+  const { isLoading, response, error } = useAxios("get", "/api/v1/conversations/", user?.id, user?.id);
 
   useEffect(() => {
     setCreateConversationErrors(null);
   }, []);
 
   useEffect(() => {
-    if (error && error.status !== 404) {
-      console.log(error.data);
+    if (!isLoading && !response && error) {
+      setConversations([]);
     }
-  }, [error]);
-
-  useEffect(() => {
     if (!isLoading && response) {
       setConversations(response);
     }
-  }, [isLoading, response]);
+  }, [isLoading, response, error]);
+
+  useEffect(() => {
+    if (newConversation?.id && user?.id) {
+      const members = newConversation.members.split(",");
+      const isMember = members.some((m) => m === user.id);
+
+      if (isMember) {
+        if (!conversations.some((c) => c.id === newConversation.id)) {
+          setConversations([...conversations, newConversation]);
+          dispatch(updateUserConversation({ id: newConversation.id, members: newConversation.members }));
+        }
+      }
+      dispatch(updateNewConversation(null));
+    }
+  }, [newConversation, user, conversations, dispatch]);
 
   useEffect(() => {
     nextConversation && dispatch(updateUserConversationInfo(nextConversation));
@@ -52,6 +79,8 @@ export default function ConversationMenu() {
         setConversations([...conversations, res.data]);
         setMemberEmail("");
         setCreateConversationErrors(null);
+        dispatch(updateUserConversationInfo(res.data));
+        socket.current.emit("newConversationCreated", res.data);
       })
       .catch((err) => {
         if (err.response.status === 401) {

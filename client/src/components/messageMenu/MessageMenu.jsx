@@ -31,8 +31,8 @@ export default function MessageMenu() {
   const { isLoading, response, error } = useAxios(
     "get",
     "/api/v1/messages/",
-    currentConversation.id,
-    currentConversation
+    currentConversation?.id,
+    currentConversation?.id
   );
 
   useEffect(() => {
