@@ -79,21 +79,6 @@ services:
     depends_on:
       - api
 
-  socketio:
-    build:
-      dockerfile: Dockerfile
-      context: "./socket"
-    ports:
-      - "7000:7000"
-    volumes:
-      - /app/node_modules
-      - ./socket:/app
-    networks:
-      - chatnetwork
-    depends_on:
-      - api
-      - client
-
   nginx:
     build:
       dockerfile: Dockerfile

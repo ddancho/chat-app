@@ -1,22 +1,20 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useContext } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { updateUsersOnline, updateMsg, updateUsersList, updateNewConversation } from "../../redux/userSlice";
 import { getUserInfoList } from "../../redux/getUsersListInfo";
-import { io } from "socket.io-client";
-import useOnSocketEvent from "../../customHooks/useOnSocketEvent";
+import { WsContext } from "./WsContext";
+import ContactsOnlineEvent from "./onSocketEvent/ContactsOnlineEvent";
+import ContactsUpdatedEvent from "./onSocketEvent/ContactsUpdatedEvent";
+import GetMessageEvent from "./onSocketEvent/GetMessageEvent";
+import NewContactEvent from "./onSocketEvent/NewContactEvent";
+import NewConversationEvent from "./onSocketEvent/NewConversationEvent";
 
 export default function WsComponent() {
   const dispatch = useDispatch();
-  const socket = useRef();
+  const ws = useContext(WsContext);
 
   useEffect(() => {
-    socket.current = io("http://localhost/", {
-      path: "/socket.io",
-      transports: ["websocket"],
-      upgrade: false,
-    });
-    socket.current.emit("getContactsOnline");
-  }, []);
+    ws?.emit("getContactsOnline");
+  }, [ws]);
 
   useEffect(() => {
     dispatch(getUserInfoList());
@@ -25,51 +23,16 @@ export default function WsComponent() {
   const { userInfo: user } = useSelector((state) => state.user);
 
   useEffect(() => {
-    socket.current.emit("addUser", user?.id);
-  }, [user]);
+    user.id && ws.emit("addUser", user.id);
+  }, [ws, user]);
 
-  const { response: contactsOnline } = useOnSocketEvent({
-    socket: socket.current,
-    event: "contactsOnline",
-  });
-  useEffect(() => {
-    dispatch(updateUsersOnline(contactsOnline));
-  }, [contactsOnline, dispatch]);
-
-  const { response: contactsUpdated } = useOnSocketEvent({
-    socket: socket.current,
-    event: "contactsUpdated",
-  });
-  useEffect(() => {
-    dispatch(updateUsersOnline(contactsUpdated));
-  }, [contactsUpdated, dispatch]);
-
-  const { response: onGetMessageData } = useOnSocketEvent({
-    socket: socket.current,
-    event: "getMessage",
-  });
-  useEffect(() => {
-    dispatch(updateMsg(onGetMessageData));
-  }, [onGetMessageData, dispatch]);
-
-  const { response: newContact } = useOnSocketEvent({
-    socket: socket.current,
-    event: "newContact",
-  });
-  useEffect(() => {
-    if (newContact) {
-      dispatch(updateUsersList({ user: newContact }));
-    }
-  }, [newContact, dispatch]);
-
-  const { response: newConversation } = useOnSocketEvent({
-    socket: socket.current,
-    event: "newConversation",
-  });
-  useEffect(() => {
-    if (newConversation) {
-      dispatch(updateNewConversation(newConversation));
-    }
-  }, [newConversation, dispatch]);
-  return <></>;
+  return (
+    <>
+      <ContactsOnlineEvent />
+      <ContactsUpdatedEvent />
+      <GetMessageEvent />
+      <NewContactEvent />
+      <NewConversationEvent />
+    </>
+  );
 }

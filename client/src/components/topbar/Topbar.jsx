@@ -12,11 +12,11 @@ import DropdownMenu from "../dropdownmenu/DropdownMenu";
 import Modal from "../modal/Modal";
 import { Person } from "@material-ui/icons";
 import { Link } from "react-router-dom";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useContext } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getUserInfo } from "../../redux/getUserInfo";
 import { updateUserNewUpload } from "../../redux/userSlice";
-import { io } from "socket.io-client";
+import { WsContext } from "../wsComponent/WsContext";
 import axios from "axios";
 
 export default function Topbar() {
@@ -24,15 +24,7 @@ export default function Topbar() {
   const [isLogout, setIsLogout] = useState(false);
   const [modal, setModal] = useState({ show: false });
   const dispatch = useDispatch();
-  const socket = useRef();
-
-  useEffect(() => {
-    socket.current = io("http://localhost/", {
-      path: "/socket.io",
-      transports: ["websocket"],
-      upgrade: false,
-    });
-  }, []);
+  const ws = useContext(WsContext);
 
   useEffect(() => {
     dispatch(getUserInfo());
@@ -46,7 +38,7 @@ export default function Topbar() {
       axios
         .get("/api/v1/auth/logout")
         .then((res) => {
-          socket.current.emit("removeUser", user.id);
+          ws?.emit("removeUser", user.id);
           setIsLogout(true);
         })
         .catch((err) => console.log(err));

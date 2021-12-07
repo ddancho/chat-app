@@ -1,10 +1,10 @@
 import { Menu, CreateConversation, NoConversation, ErrMsg } from "../styles/ConversationMenu.styled";
 import Conversation from "../conversation/Conversation";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 import { updateUserConversationInfo } from "../../redux/updateUserConversationInfo";
 import { updateUserConversation, updateNewConversation } from "../../redux/userSlice";
-import { io } from "socket.io-client";
+import { WsContext } from "../wsComponent/WsContext";
 import axios from "axios";
 import useAxios from "../../customHooks/useAxios";
 
@@ -15,15 +15,7 @@ export default function ConversationMenu() {
   const [createConversationErrors, setCreateConversationErrors] = useState(null);
 
   const dispatch = useDispatch();
-  const socket = useRef();
-
-  useEffect(() => {
-    socket.current = io("http://localhost/", {
-      path: "/socket.io",
-      transports: ["websocket"],
-      upgrade: false,
-    });
-  }, []);
+  const ws = useContext(WsContext);
 
   const {
     userInfo: user,
@@ -80,7 +72,7 @@ export default function ConversationMenu() {
         setMemberEmail("");
         setCreateConversationErrors(null);
         dispatch(updateUserConversationInfo(res.data));
-        socket.current.emit("newConversationCreated", res.data);
+        ws?.emit("newConversationCreated", res.data);
       })
       .catch((err) => {
         if (err.response.status === 401) {

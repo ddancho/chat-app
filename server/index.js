@@ -11,27 +11,34 @@ const sessionRoutes = require("./routes/sessionRoutes");
 const conversationRoutes = require("./routes/conversationRoutes");
 const messageRoutes = require("./routes/messageRoutes");
 
+const onSocketIo = require("./socketio/socket").onSocketIo;
+
 // server
 const app = express();
+const server = require("http").createServer(app);
 
-// redis session
+// io
+const io = require("socket.io")(server, { transports: ["websocket"] });
+
+// redis session middleware
 const redisClient = redis.createClient({
   host: "redis",
   port: 6379,
 });
 const RedisStore = require("connect-redis")(session);
-app.use(
-  session({
-    store: new RedisStore({ client: redisClient }),
-    secret: process.env.SESSION_SECRET,
-    cookie: {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 1000,
-    },
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+
+const sessionMiddleware = session({
+  store: new RedisStore({ client: redisClient }),
+  secret: process.env.SESSION_SECRET,
+  cookie: {
+    httpOnly: true,
+    maxAge: 24 * 60 * 60 * 1000,
+  },
+  resave: false,
+  saveUninitialized: false,
+});
+
+app.use(sessionMiddleware);
 
 // middleware
 app.use(express.json());
@@ -55,6 +62,10 @@ app.all("*", (req, res) => {
   res.status(404).send("<h1>Page Not Found</h1>");
 });
 
-app.listen(5000, () => {
+// websocket logic
+const websocket = { io };
+onSocketIo.call(websocket);
+
+server.listen(5000, () => {
   console.log("Server is up and running on port 5000...");
 });

@@ -1,9 +1,9 @@
 import { Chat, Top, Bottom, NoConversation } from "../styles/MessageMenu.styled";
 import Message from "../message/Message";
 import { useSelector, useDispatch } from "react-redux";
-import { useState, useEffect, useRef } from "react";
-import { io } from "socket.io-client";
+import { useState, useEffect, useRef, useContext } from "react";
 import { updateMsg } from "../../redux/userSlice";
+import { WsContext } from "../wsComponent/WsContext";
 import axios from "axios";
 import useAxios from "../../customHooks/useAxios";
 
@@ -11,16 +11,8 @@ export default function MessageMenu() {
   const [messages, setMessages] = useState([]);
   const [newMessageText, setNewMessageText] = useState("");
   const scrollToLastMsg = useRef();
-  const socket = useRef();
   const dispatch = useDispatch();
-
-  useEffect(() => {
-    socket.current = io("http://localhost/", {
-      path: "/socket.io",
-      transports: ["websocket"],
-      upgrade: false,
-    });
-  }, []);
+  const ws = useContext(WsContext);
 
   const {
     userInfo: user,
@@ -75,7 +67,7 @@ export default function MessageMenu() {
       .then((res) => {
         setMessages([...messages, res.data]);
         setNewMessageText("");
-        socket.current.emit("sendMessage", {
+        ws?.emit("sendMessage", {
           senderId: user.id,
           receiverId: currentConversation.members.split(",").find((id) => id !== user.id),
           msg: res.data,
