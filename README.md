@@ -18,8 +18,6 @@ Session storage [Redis](https://www.npmjs.com/package/connect-redis)
 
 SQL query builder for mysql db [Knex](https://knexjs.org/)
 
-Socket.IO [Server](https://socket.io/)
-
 ## Reverse proxy and load balancer
 
 [Nginx](https://nginx.org/)
