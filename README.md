@@ -1,6 +1,6 @@
 # CHAT APP
 
-## Client side frameworks ( libraries )
+## Client side libraries
 
 [React](https://reactjs.org/), [Redux Toolkit](https://redux-toolkit.js.org/), [Axios](https://axios-http.com/)
 
@@ -8,7 +8,7 @@ Style app with [Styled Component](https://styled-components.com/)
 
 Socket.IO [Client](https://github.com/socketio/socket.io-client)
 
-## Server side frameworks ( libraries )
+## Server side libraries
 
 Server [Express](https://expressjs.com/)
 
